@@ -1,6 +1,11 @@
 ---
 title: "Using Information Theory to Solve Wordle"
-format: html
+format: 
+  html:
+    code-fold: true
+    code-line-numbers: true
+    code-tools: true
+    self-contained: true
 editor: visual
 ---
 
@@ -101,7 +106,6 @@ calculate_entropy <- function(word, word_list, word_len = 5, get_avg = FALSE) {
   
   if (get_avg) {
     ents <- ents %>%
-      group_by(word) %>%
       summarize(avg = sum(Freq * log(1/Freq, 2)))
   }
   
@@ -110,14 +114,16 @@ calculate_entropy <- function(word, word_list, word_len = 5, get_avg = FALSE) {
 }
 
 # Use this to calculate probabilities
-calculate_entropy("as", two_letter_words, word_len = 2)
+calculate_entropy("as", two_letter_words, word_len = 2) %>%
+  kableExtra::kable()
 ```
 
 c. Calculate $E[I]$
 
 ```{r}
 # Set get_avg to TRUE to get the expected bits 
-calculate_entropy("as", two_letter_words, word_len = 2, get_avg = TRUE)
+calculate_entropy("as", two_letter_words, word_len = 2, get_avg = TRUE) %>%
+  kableExtra::kable()
 ```
 
 d. Repeat steps b-c but for different two letter guesses. Which one is the best?
