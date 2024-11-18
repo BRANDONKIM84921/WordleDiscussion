@@ -2,12 +2,15 @@ library(tidyverse)
 
 word_list <- readLines("wordlewords.txt")
 
-get_feedback <- function(guess, target) {
-  feedback <- character(5)
+get_feedback <- function(guess, target, wordlen = 5) {
+  guess <- toupper(guess)
+  target <- toupper(target)
   
-  target_matched <- logical(5)
+  feedback <- character(wordlen)
   
-  for (i in 1:5) {
+  target_matched <- logical(wordlen)
+  
+  for (i in 1:wordlen) {
     if (substring(guess, i, i)  == substring(target, i, i)) {
       feedback[i] <- "G"
       target_matched[i] <- TRUE  
@@ -16,9 +19,9 @@ get_feedback <- function(guess, target) {
     }
   }
   
-  for (i in 1:5) {
+  for (i in 1:wordlen) {
     if (feedback[i] == "B") {  
-      for (j in 1:5) {
+      for (j in 1:wordlen) {
         if (!target_matched[j] & substring(guess, i, i) == substring(target, j, j)) {
           feedback[i] <- "Y"
           target_matched[j] <- TRUE  
@@ -28,7 +31,7 @@ get_feedback <- function(guess, target) {
     }
   }
   
-  return(paste(feedback, collapse = ""))
+  paste(feedback, collapse = "")
 }
 
 calculate_entropy <- function(word, word_list, get_avg = FALSE) {
@@ -61,9 +64,10 @@ for (word in word_list) {
   
 }
 
-calculate_entropy("salet", word_list, get_avg = TRUE)
-
 avg_entropies <- get_entropies %>%
   group_by(word) %>%
-  summarize(avg = sum(Freq * log(1/Freq, 2)))
+  summarize(avg = sum(Freq * log(1/Freq, 2))) %>%
+  arrange(desc(avg))
+
+write_csv(avg_entropies, here::here("avg_entropies.csv"))
 

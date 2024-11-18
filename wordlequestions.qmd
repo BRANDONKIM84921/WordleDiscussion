@@ -4,7 +4,7 @@ format: html
 editor: visual
 ---
 
-## Part 1. Introduction to Bits 
+## Part 1. Introduction to Bits
 
 Suppose a person was playing the daily wordle. However, today's a weird day because when NYT was selecting a word for the answer, they only randomly selected from these 10 possible words:
 
@@ -12,14 +12,125 @@ PLANE PLANT CRANE SHAPE SLANT FLARE PARTY GLINT GRAPH APPLE
 
 For this scenario, let's assume this person doesn't know about this restriction in the answer choice. They decide to start the game by guessing STAMP.
 
-1.  Let's say the actual answer was PLANE. What "result" would the guess STAMP give?
+a.  Let's say the actual answer was PLANE. What "result" would the guess STAMP give?
 
-2.  With that "result," how many of those 10 possible words are eliminated from being the correct choice?
+b.  With that "result," how many of those 10 possible words are eliminated from being the correct choice?
 
-3.  Repeat 1-2, but let's say this person guessed MARCH.
+c.  Repeat a-b, but let's say this person guessed MARCH.
 
-4.  Repeat 1-2, but let's say this person guessed PLAIN.
+d.  Repeat a-b, but let's say this person guessed PLAIN.
 
-5.  Repeat 1-2 but let's say this person guessed MYTHS
+e.  Repeat a-b, but let's say this person guessed MYTHS
 
-Working with probabilities is a bit funky.
+If we think about wordle in an information manner, every guess should ideally be cutting down our probability space. The more potential answers you eliminate from a guess, the better. Information theorists use a metric known as bits to quantify how good a guess is, here's the formula:
+
+$$ \text{bits} = \text{log}_2(\frac{1}{p}) $$
+
+In this context, bits are used as a metric to assess the quality of a guess. The more narrow the probability space gets after a guess, the more bits is attributed to that guess. It's important to note that it is directly associated with probability, the lower the probability, the higher the returning bits. Therefore, its commonly explained that bits are directly correlated with uncertainty. 
+
+f. With the actual answer being PLANE, calculate the number of bits you would obtain from each guess from questions a, c, d, and e. 
+g. Repeat f, but now let's suppose the actual answer was GLINT. 
+
+It's important to realize that the number of bits you would obtain is entirely dependent on what the truth is. So in this scenario, it's dependent on your "result" (the color of your squares). Therefore, if we're actually playing wordle, since we don't know what the truth is, we would assess the quality of a guess by the expected value of bits returned. 
+
+So using the law of total expectation, the formula for expected bits would be:
+
+$$E[I] = \Sigma p_i\text{log}(\frac{1}{p_i}) $$
+
+where $i$ represents each possible outcome (Since each of the 5 squares has 3 possible color outcomes: green, yellow, black; the total number of outcomes would be $3^5 = 243$)
+
+## Part 2: Toy Example
+
+Suppose in this scenario, we're playing wordle but with only 2 letter words. Read the file of 2 letter words here:
+
+```{r}
+#| warning: FALSE
+two_letter_words <- readLines("twoletterwords.txt") # All acceptable 2 letter words for scrabble
+```
+
+a. What are all the possible color combinations from a two letter word guess?
+
+b. Determine the probability of obtaining each color combination if your guess was "as".
+
+```{r}
+library(tidyverse)
+
+get_feedback <- function(guess, target, word_len = 5) {
+  guess <- toupper(guess)
+  target <- toupper(target)
+  
+  feedback <- character(word_len)
+  
+  target_matched <- logical(word_len)
+  
+  for (i in 1:word_len) {
+    if (substring(guess, i, i)  == substring(target, i, i)) {
+      feedback[i] <- "G"
+      target_matched[i] <- TRUE  
+    } else {
+      feedback[i] <- "B"
+    }
+  }
+  
+  for (i in 1:word_len) {
+    if (feedback[i] == "B") {  
+      for (j in 1:word_len) {
+        if (!target_matched[j] & substring(guess, i, i) == substring(target, j, j)) {
+          feedback[i] <- "Y"
+          target_matched[j] <- TRUE  
+          break
+        }
+      }
+    }
+  }
+  
+  paste(feedback, collapse = "")
+}
+
+calculate_entropy <- function(word, word_list, word_len = 5, get_avg = FALSE) {
+  ents <- word_list %>% 
+    sapply(function(w) get_feedback(word, w, word_len)) %>%
+    table %>%
+    data.frame() %>%
+    mutate(word = word, Freq = Freq/sum(Freq)) |>
+    rename(feedback = `.`)
+  
+  if (get_avg) {
+    ents <- ents %>%
+      group_by(word) %>%
+      summarize(avg = sum(Freq * log(1/Freq, 2)))
+  }
+  
+  ents
+    
+}
+
+calculate_entropy("as", two_letter_words, word_len = 2)
+```
+
+c. Calculate $E[I]$
+
+```{r}
+calculate_entropy("as", two_letter_words, word_len = 2, get_avg = TRUE)
+```
+
+d. Repeat steps b-c but for different two letter guesses. Which one is the best?
+
+## Part 3: Real Example
+
+a. So with the information presented above, devise an algorithm to determine what's the best starting word for wordle. (Check what Brandon got as his best first guess in avg_entropies.csv in the github)
+
+b. How should we determine what our next subsequent guesses should be?
+
+c. Let's play a game! (whichever group gets it in the lowest amount of guesses wins)
+
+## Part 4: Discussion
+
+a. What if there was a non uniform distribution in selecting the answer? How would we handle that?
+
+b. Can you name another situation where information theory could be used? 
+
+c. Are there other strategies used for wordle? How do they compare to this approach?
+
+
+
