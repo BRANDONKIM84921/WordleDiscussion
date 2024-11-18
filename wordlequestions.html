@@ -3215,16 +3215,17 @@ window.Quarto = {
 <span id="cb2-43"><a href="#cb2-43"></a>  </span>
 <span id="cb2-44"><a href="#cb2-44"></a>  <span class="cf">if</span> (get_avg) {</span>
 <span id="cb2-45"><a href="#cb2-45"></a>    ents <span class="ot">&lt;-</span> ents <span class="sc">%&gt;%</span></span>
-<span id="cb2-46"><a href="#cb2-46"></a>      <span class="fu">summarize</span>(<span class="at">avg =</span> <span class="fu">sum</span>(Freq <span class="sc">*</span> <span class="fu">log</span>(<span class="dv">1</span><span class="sc">/</span>Freq, <span class="dv">2</span>)))</span>
-<span id="cb2-47"><a href="#cb2-47"></a>  }</span>
-<span id="cb2-48"><a href="#cb2-48"></a>  </span>
-<span id="cb2-49"><a href="#cb2-49"></a>  ents</span>
-<span id="cb2-50"><a href="#cb2-50"></a>    </span>
-<span id="cb2-51"><a href="#cb2-51"></a>}</span>
-<span id="cb2-52"><a href="#cb2-52"></a></span>
-<span id="cb2-53"><a href="#cb2-53"></a><span class="co"># Use this to calculate probabilities</span></span>
-<span id="cb2-54"><a href="#cb2-54"></a><span class="fu">calculate_entropy</span>(<span class="st">&quot;as&quot;</span>, two_letter_words, <span class="at">word_len =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb2-55"><a href="#cb2-55"></a>  kableExtra<span class="sc">::</span><span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-46"><a href="#cb2-46"></a>      <span class="fu">group_by</span>(word) <span class="sc">%&gt;%</span></span>
+<span id="cb2-47"><a href="#cb2-47"></a>      <span class="fu">summarize</span>(<span class="at">average_bits =</span> <span class="fu">sum</span>(Freq <span class="sc">*</span> <span class="fu">log</span>(<span class="dv">1</span><span class="sc">/</span>Freq, <span class="dv">2</span>)))</span>
+<span id="cb2-48"><a href="#cb2-48"></a>  }</span>
+<span id="cb2-49"><a href="#cb2-49"></a>  </span>
+<span id="cb2-50"><a href="#cb2-50"></a>  ents</span>
+<span id="cb2-51"><a href="#cb2-51"></a>    </span>
+<span id="cb2-52"><a href="#cb2-52"></a>}</span>
+<span id="cb2-53"><a href="#cb2-53"></a></span>
+<span id="cb2-54"><a href="#cb2-54"></a><span class="co"># Use this to calculate probabilities</span></span>
+<span id="cb2-55"><a href="#cb2-55"></a><span class="fu">calculate_entropy</span>(<span class="st">&quot;as&quot;</span>, two_letter_words, <span class="at">word_len =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-56"><a href="#cb2-56"></a>  kableExtra<span class="sc">::</span><span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
@@ -3284,11 +3285,13 @@ window.Quarto = {
 <table class="table table-sm table-striped small">
 <thead>
 <tr class="header">
-<th style="text-align: right;">avg</th>
+<th style="text-align: left;">word</th>
+<th style="text-align: right;">average_bits</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;">as</td>
 <td style="text-align: right;">1.550885</td>
 </tr>
 </tbody>
@@ -3889,45 +3892,46 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb4-111"><a href="#cb4-111"></a>  </span>
 <span id="cb4-112"><a href="#cb4-112"></a>  <span class="cf">if</span> (get_avg) {</span>
 <span id="cb4-113"><a href="#cb4-113"></a>    ents <span class="ot">&lt;-</span> ents <span class="sc">%&gt;%</span></span>
-<span id="cb4-114"><a href="#cb4-114"></a>      <span class="fu">summarize</span>(<span class="at">avg =</span> <span class="fu">sum</span>(Freq <span class="sc">*</span> <span class="fu">log</span>(<span class="dv">1</span><span class="sc">/</span>Freq, <span class="dv">2</span>)))</span>
-<span id="cb4-115"><a href="#cb4-115"></a>  }</span>
-<span id="cb4-116"><a href="#cb4-116"></a>  </span>
-<span id="cb4-117"><a href="#cb4-117"></a>  ents</span>
-<span id="cb4-118"><a href="#cb4-118"></a>    </span>
-<span id="cb4-119"><a href="#cb4-119"></a>}</span>
-<span id="cb4-120"><a href="#cb4-120"></a></span>
-<span id="cb4-121"><a href="#cb4-121"></a><span class="co"># Use this to calculate probabilities</span></span>
-<span id="cb4-122"><a href="#cb4-122"></a><span class="fu">calculate_entropy</span>(<span class="st">&quot;as&quot;</span>, two_letter_words, <span class="at">word_len =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb4-123"><a href="#cb4-123"></a>  kableExtra<span class="sc">::</span><span class="fu">kable</span>()</span>
-<span id="cb4-124"><a href="#cb4-124"></a><span class="in">```</span></span>
-<span id="cb4-125"><a href="#cb4-125"></a></span>
-<span id="cb4-126"><a href="#cb4-126"></a>c. Calculate $E<span class="co">[</span><span class="ot">I</span><span class="co">]</span>$</span>
-<span id="cb4-127"><a href="#cb4-127"></a></span>
-<span id="cb4-130"><a href="#cb4-130"></a><span class="in">```{r}</span></span>
-<span id="cb4-131"><a href="#cb4-131"></a><span class="co"># Set get_avg to TRUE to get the expected bits </span></span>
-<span id="cb4-132"><a href="#cb4-132"></a><span class="fu">calculate_entropy</span>(<span class="st">&quot;as&quot;</span>, two_letter_words, <span class="at">word_len =</span> <span class="dv">2</span>, <span class="at">get_avg =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb4-133"><a href="#cb4-133"></a>  kableExtra<span class="sc">::</span><span class="fu">kable</span>()</span>
-<span id="cb4-134"><a href="#cb4-134"></a><span class="in">```</span></span>
-<span id="cb4-135"><a href="#cb4-135"></a></span>
-<span id="cb4-136"><a href="#cb4-136"></a>d. Repeat steps b-c but for different two letter guesses. Which one is the best?</span>
-<span id="cb4-137"><a href="#cb4-137"></a></span>
-<span id="cb4-138"><a href="#cb4-138"></a><span class="fu">## Part 3: Real Example</span></span>
-<span id="cb4-139"><a href="#cb4-139"></a></span>
-<span id="cb4-140"><a href="#cb4-140"></a>a. So with the information presented above, devise an algorithm to determine what&#39;s the best starting word for wordle. (Check what Brandon got as his best first guess in avg_entropies.csv in the github)</span>
-<span id="cb4-141"><a href="#cb4-141"></a></span>
-<span id="cb4-142"><a href="#cb4-142"></a>b. How should we determine what our next subsequent guesses should be?</span>
-<span id="cb4-143"><a href="#cb4-143"></a></span>
-<span id="cb4-144"><a href="#cb4-144"></a>c. Let&#39;s play a game! (whichever group gets it in the lowest amount of guesses wins)</span>
-<span id="cb4-145"><a href="#cb4-145"></a></span>
-<span id="cb4-146"><a href="#cb4-146"></a><span class="fu">## Part 4: Discussion</span></span>
-<span id="cb4-147"><a href="#cb4-147"></a></span>
-<span id="cb4-148"><a href="#cb4-148"></a>a. What if there was a non uniform distribution in selecting the answer? How would we handle that?</span>
-<span id="cb4-149"><a href="#cb4-149"></a></span>
-<span id="cb4-150"><a href="#cb4-150"></a>b. Can you name another situation where information theory could be used? </span>
-<span id="cb4-151"><a href="#cb4-151"></a></span>
-<span id="cb4-152"><a href="#cb4-152"></a>c. Are there other strategies used for wordle? How do they compare to this approach?</span>
-<span id="cb4-153"><a href="#cb4-153"></a></span>
+<span id="cb4-114"><a href="#cb4-114"></a>      <span class="fu">group_by</span>(word) <span class="sc">%&gt;%</span></span>
+<span id="cb4-115"><a href="#cb4-115"></a>      <span class="fu">summarize</span>(<span class="at">average_bits =</span> <span class="fu">sum</span>(Freq <span class="sc">*</span> <span class="fu">log</span>(<span class="dv">1</span><span class="sc">/</span>Freq, <span class="dv">2</span>)))</span>
+<span id="cb4-116"><a href="#cb4-116"></a>  }</span>
+<span id="cb4-117"><a href="#cb4-117"></a>  </span>
+<span id="cb4-118"><a href="#cb4-118"></a>  ents</span>
+<span id="cb4-119"><a href="#cb4-119"></a>    </span>
+<span id="cb4-120"><a href="#cb4-120"></a>}</span>
+<span id="cb4-121"><a href="#cb4-121"></a></span>
+<span id="cb4-122"><a href="#cb4-122"></a><span class="co"># Use this to calculate probabilities</span></span>
+<span id="cb4-123"><a href="#cb4-123"></a><span class="fu">calculate_entropy</span>(<span class="st">&quot;as&quot;</span>, two_letter_words, <span class="at">word_len =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-124"><a href="#cb4-124"></a>  kableExtra<span class="sc">::</span><span class="fu">kable</span>()</span>
+<span id="cb4-125"><a href="#cb4-125"></a><span class="in">```</span></span>
+<span id="cb4-126"><a href="#cb4-126"></a></span>
+<span id="cb4-127"><a href="#cb4-127"></a>c. Calculate $E<span class="co">[</span><span class="ot">I</span><span class="co">]</span>$</span>
+<span id="cb4-128"><a href="#cb4-128"></a></span>
+<span id="cb4-131"><a href="#cb4-131"></a><span class="in">```{r}</span></span>
+<span id="cb4-132"><a href="#cb4-132"></a><span class="co"># Set get_avg to TRUE to get the expected bits </span></span>
+<span id="cb4-133"><a href="#cb4-133"></a><span class="fu">calculate_entropy</span>(<span class="st">&quot;as&quot;</span>, two_letter_words, <span class="at">word_len =</span> <span class="dv">2</span>, <span class="at">get_avg =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-134"><a href="#cb4-134"></a>  kableExtra<span class="sc">::</span><span class="fu">kable</span>()</span>
+<span id="cb4-135"><a href="#cb4-135"></a><span class="in">```</span></span>
+<span id="cb4-136"><a href="#cb4-136"></a></span>
+<span id="cb4-137"><a href="#cb4-137"></a>d. Repeat steps b-c but for different two letter guesses. Which one is the best?</span>
+<span id="cb4-138"><a href="#cb4-138"></a></span>
+<span id="cb4-139"><a href="#cb4-139"></a><span class="fu">## Part 3: Real Example</span></span>
+<span id="cb4-140"><a href="#cb4-140"></a></span>
+<span id="cb4-141"><a href="#cb4-141"></a>a. So with the information presented above, devise an algorithm to determine what&#39;s the best starting word for wordle. (Check what Brandon got as his best first guess in avg_entropies.csv in the github)</span>
+<span id="cb4-142"><a href="#cb4-142"></a></span>
+<span id="cb4-143"><a href="#cb4-143"></a>b. How should we determine what our next subsequent guesses should be?</span>
+<span id="cb4-144"><a href="#cb4-144"></a></span>
+<span id="cb4-145"><a href="#cb4-145"></a>c. Let&#39;s play a game! (whichever group gets it in the lowest amount of guesses wins)</span>
+<span id="cb4-146"><a href="#cb4-146"></a></span>
+<span id="cb4-147"><a href="#cb4-147"></a><span class="fu">## Part 4: Discussion</span></span>
+<span id="cb4-148"><a href="#cb4-148"></a></span>
+<span id="cb4-149"><a href="#cb4-149"></a>a. What if there was a non uniform distribution in selecting the answer? How would we handle that?</span>
+<span id="cb4-150"><a href="#cb4-150"></a></span>
+<span id="cb4-151"><a href="#cb4-151"></a>b. Can you name another situation where information theory could be used? </span>
+<span id="cb4-152"><a href="#cb4-152"></a></span>
+<span id="cb4-153"><a href="#cb4-153"></a>c. Are there other strategies used for wordle? How do they compare to this approach?</span>
 <span id="cb4-154"><a href="#cb4-154"></a></span>
+<span id="cb4-155"><a href="#cb4-155"></a></span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
