@@ -3146,8 +3146,8 @@ window.Quarto = {
 <p><span class="math display">\[ \text{bits} = \text{log}_2(\frac{1}{p}) \]</span></p>
 <p>In this context, bits are used as a metric to assess the quality of a guess. The more narrow the probability space gets after a guess, the more bits is attributed to that guess. It’s important to note that it is directly associated with probability, the lower the probability, the higher the returning bits. Therefore, its commonly explained that bits are directly correlated with uncertainty.</p>
 <ol start="6" type="a">
-<li>With the actual answer being PLANE, calculate the number of bits you would obtain from each guess from questions a, c, d, and e.</li>
-<li>Repeat f, but now let’s suppose the actual answer was GLINT.</li>
+<li><p>With the actual answer being PLANE, calculate the number of bits you would obtain from each guess from questions a, c, d, and e.</p></li>
+<li><p>Repeat f, but now let’s suppose the actual answer was GLINT.</p></li>
 </ol>
 <p>It’s important to realize that the number of bits you would obtain is entirely dependent on what the truth is. So in this scenario, it’s dependent on your “result” (the color of your squares). Therefore, if we’re actually playing wordle, since we don’t know what the truth is, we would assess the quality of a guess by the expected value of bits returned.</p>
 <p>So using the law of total expectation, the formula for expected bits would be:</p>
@@ -3816,117 +3816,118 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb4-34"><a href="#cb4-34"></a>In this context, bits are used as a metric to assess the quality of a guess. The more narrow the probability space gets after a guess, the more bits is attributed to that guess. It&#39;s important to note that it is directly associated with probability, the lower the probability, the higher the returning bits. Therefore, its commonly explained that bits are directly correlated with uncertainty. </span>
 <span id="cb4-35"><a href="#cb4-35"></a></span>
 <span id="cb4-36"><a href="#cb4-36"></a>f. With the actual answer being PLANE, calculate the number of bits you would obtain from each guess from questions a, c, d, and e. </span>
-<span id="cb4-37"><a href="#cb4-37"></a>g. Repeat f, but now let&#39;s suppose the actual answer was GLINT. </span>
-<span id="cb4-38"><a href="#cb4-38"></a></span>
-<span id="cb4-39"><a href="#cb4-39"></a>It&#39;s important to realize that the number of bits you would obtain is entirely dependent on what the truth is. So in this scenario, it&#39;s dependent on your &quot;result&quot; (the color of your squares). Therefore, if we&#39;re actually playing wordle, since we don&#39;t know what the truth is, we would assess the quality of a guess by the expected value of bits returned. </span>
-<span id="cb4-40"><a href="#cb4-40"></a></span>
-<span id="cb4-41"><a href="#cb4-41"></a>So using the law of total expectation, the formula for expected bits would be:</span>
-<span id="cb4-42"><a href="#cb4-42"></a></span>
-<span id="cb4-43"><a href="#cb4-43"></a>$$E<span class="co">[</span><span class="ot">I</span><span class="co">]</span> = \Sigma p_i\text{log}(\frac{1}{p_i}) $$</span>
-<span id="cb4-44"><a href="#cb4-44"></a></span>
-<span id="cb4-45"><a href="#cb4-45"></a>where $i$ represents each possible outcome (Since each of the 5 squares has 3 possible color outcomes: green, yellow, black; the total number of outcomes would be $3^5 = 243$)</span>
-<span id="cb4-46"><a href="#cb4-46"></a></span>
-<span id="cb4-47"><a href="#cb4-47"></a><span class="fu">## Part 2: Toy Example</span></span>
-<span id="cb4-48"><a href="#cb4-48"></a></span>
-<span id="cb4-49"><a href="#cb4-49"></a>Suppose in this scenario, we&#39;re playing wordle but with only 2 letter words. Read the file of 2 letter words here:</span>
-<span id="cb4-50"><a href="#cb4-50"></a></span>
-<span id="cb4-53"><a href="#cb4-53"></a><span class="in">```{r}</span></span>
-<span id="cb4-54"><a href="#cb4-54"></a><span class="co">#| warning: FALSE</span></span>
-<span id="cb4-55"><a href="#cb4-55"></a>two_letter_words <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">&quot;twoletterwords.txt&quot;</span>) <span class="co"># All acceptable 2 letter words for scrabble</span></span>
-<span id="cb4-56"><a href="#cb4-56"></a><span class="in">```</span></span>
-<span id="cb4-57"><a href="#cb4-57"></a></span>
-<span id="cb4-58"><a href="#cb4-58"></a>a. What are all the possible color combinations from a two letter word guess?</span>
-<span id="cb4-59"><a href="#cb4-59"></a></span>
-<span id="cb4-60"><a href="#cb4-60"></a>b. Determine the probability of obtaining each color combination if your guess was &quot;as&quot;.</span>
-<span id="cb4-61"><a href="#cb4-61"></a></span>
-<span id="cb4-64"><a href="#cb4-64"></a><span class="in">```{r}</span></span>
-<span id="cb4-65"><a href="#cb4-65"></a><span class="co">#| message: FALSE</span></span>
-<span id="cb4-66"><a href="#cb4-66"></a><span class="co">#| warning: FALSE </span></span>
-<span id="cb4-67"><a href="#cb4-67"></a></span>
-<span id="cb4-68"><a href="#cb4-68"></a><span class="co"># Full code can be found in wordlefuncs.R </span></span>
-<span id="cb4-69"><a href="#cb4-69"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb4-70"><a href="#cb4-70"></a></span>
-<span id="cb4-71"><a href="#cb4-71"></a>get_feedback <span class="ot">&lt;-</span> <span class="cf">function</span>(guess, target, <span class="at">word_len =</span> <span class="dv">5</span>) {</span>
-<span id="cb4-72"><a href="#cb4-72"></a>  guess <span class="ot">&lt;-</span> <span class="fu">toupper</span>(guess)</span>
-<span id="cb4-73"><a href="#cb4-73"></a>  target <span class="ot">&lt;-</span> <span class="fu">toupper</span>(target)</span>
-<span id="cb4-74"><a href="#cb4-74"></a>  </span>
-<span id="cb4-75"><a href="#cb4-75"></a>  feedback <span class="ot">&lt;-</span> <span class="fu">character</span>(word_len)</span>
-<span id="cb4-76"><a href="#cb4-76"></a>  </span>
-<span id="cb4-77"><a href="#cb4-77"></a>  target_matched <span class="ot">&lt;-</span> <span class="fu">logical</span>(word_len)</span>
-<span id="cb4-78"><a href="#cb4-78"></a>  </span>
-<span id="cb4-79"><a href="#cb4-79"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>word_len) {</span>
-<span id="cb4-80"><a href="#cb4-80"></a>    <span class="cf">if</span> (<span class="fu">substring</span>(guess, i, i)  <span class="sc">==</span> <span class="fu">substring</span>(target, i, i)) {</span>
-<span id="cb4-81"><a href="#cb4-81"></a>      feedback[i] <span class="ot">&lt;-</span> <span class="st">&quot;G&quot;</span></span>
-<span id="cb4-82"><a href="#cb4-82"></a>      target_matched[i] <span class="ot">&lt;-</span> <span class="cn">TRUE</span>  </span>
-<span id="cb4-83"><a href="#cb4-83"></a>    } <span class="cf">else</span> {</span>
-<span id="cb4-84"><a href="#cb4-84"></a>      feedback[i] <span class="ot">&lt;-</span> <span class="st">&quot;B&quot;</span></span>
-<span id="cb4-85"><a href="#cb4-85"></a>    }</span>
-<span id="cb4-86"><a href="#cb4-86"></a>  }</span>
-<span id="cb4-87"><a href="#cb4-87"></a>  </span>
-<span id="cb4-88"><a href="#cb4-88"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>word_len) {</span>
-<span id="cb4-89"><a href="#cb4-89"></a>    <span class="cf">if</span> (feedback[i] <span class="sc">==</span> <span class="st">&quot;B&quot;</span>) {  </span>
-<span id="cb4-90"><a href="#cb4-90"></a>      <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>word_len) {</span>
-<span id="cb4-91"><a href="#cb4-91"></a>        <span class="cf">if</span> (<span class="sc">!</span>target_matched[j] <span class="sc">&amp;</span> <span class="fu">substring</span>(guess, i, i) <span class="sc">==</span> <span class="fu">substring</span>(target, j, j)) {</span>
-<span id="cb4-92"><a href="#cb4-92"></a>          feedback[i] <span class="ot">&lt;-</span> <span class="st">&quot;Y&quot;</span></span>
-<span id="cb4-93"><a href="#cb4-93"></a>          target_matched[j] <span class="ot">&lt;-</span> <span class="cn">TRUE</span>  </span>
-<span id="cb4-94"><a href="#cb4-94"></a>          <span class="cf">break</span></span>
-<span id="cb4-95"><a href="#cb4-95"></a>        }</span>
-<span id="cb4-96"><a href="#cb4-96"></a>      }</span>
-<span id="cb4-97"><a href="#cb4-97"></a>    }</span>
-<span id="cb4-98"><a href="#cb4-98"></a>  }</span>
-<span id="cb4-99"><a href="#cb4-99"></a>  </span>
-<span id="cb4-100"><a href="#cb4-100"></a>  <span class="fu">paste</span>(feedback, <span class="at">collapse =</span> <span class="st">&quot;&quot;</span>)</span>
-<span id="cb4-101"><a href="#cb4-101"></a>}</span>
-<span id="cb4-102"><a href="#cb4-102"></a></span>
-<span id="cb4-103"><a href="#cb4-103"></a>calculate_entropy <span class="ot">&lt;-</span> <span class="cf">function</span>(word, word_list, <span class="at">word_len =</span> <span class="dv">5</span>, <span class="at">get_avg =</span> <span class="cn">FALSE</span>) {</span>
-<span id="cb4-104"><a href="#cb4-104"></a>  ents <span class="ot">&lt;-</span> word_list <span class="sc">%&gt;%</span> </span>
-<span id="cb4-105"><a href="#cb4-105"></a>    <span class="fu">sapply</span>(<span class="cf">function</span>(w) <span class="fu">get_feedback</span>(word, w, word_len)) <span class="sc">%&gt;%</span></span>
-<span id="cb4-106"><a href="#cb4-106"></a>    table <span class="sc">%&gt;%</span></span>
-<span id="cb4-107"><a href="#cb4-107"></a>    <span class="fu">data.frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb4-108"><a href="#cb4-108"></a>    <span class="fu">mutate</span>(<span class="at">word =</span> word, <span class="at">Freq =</span> Freq<span class="sc">/</span><span class="fu">sum</span>(Freq)) <span class="sc">|&gt;</span></span>
-<span id="cb4-109"><a href="#cb4-109"></a>    <span class="fu">rename</span>(<span class="at">feedback =</span> <span class="st">`</span><span class="at">.</span><span class="st">`</span>)</span>
-<span id="cb4-110"><a href="#cb4-110"></a>  </span>
-<span id="cb4-111"><a href="#cb4-111"></a>  <span class="cf">if</span> (get_avg) {</span>
-<span id="cb4-112"><a href="#cb4-112"></a>    ents <span class="ot">&lt;-</span> ents <span class="sc">%&gt;%</span></span>
-<span id="cb4-113"><a href="#cb4-113"></a>      <span class="fu">summarize</span>(<span class="at">avg =</span> <span class="fu">sum</span>(Freq <span class="sc">*</span> <span class="fu">log</span>(<span class="dv">1</span><span class="sc">/</span>Freq, <span class="dv">2</span>)))</span>
-<span id="cb4-114"><a href="#cb4-114"></a>  }</span>
-<span id="cb4-115"><a href="#cb4-115"></a>  </span>
-<span id="cb4-116"><a href="#cb4-116"></a>  ents</span>
-<span id="cb4-117"><a href="#cb4-117"></a>    </span>
-<span id="cb4-118"><a href="#cb4-118"></a>}</span>
-<span id="cb4-119"><a href="#cb4-119"></a></span>
-<span id="cb4-120"><a href="#cb4-120"></a><span class="co"># Use this to calculate probabilities</span></span>
-<span id="cb4-121"><a href="#cb4-121"></a><span class="fu">calculate_entropy</span>(<span class="st">&quot;as&quot;</span>, two_letter_words, <span class="at">word_len =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb4-122"><a href="#cb4-122"></a>  kableExtra<span class="sc">::</span><span class="fu">kable</span>()</span>
-<span id="cb4-123"><a href="#cb4-123"></a><span class="in">```</span></span>
-<span id="cb4-124"><a href="#cb4-124"></a></span>
-<span id="cb4-125"><a href="#cb4-125"></a>c. Calculate $E<span class="co">[</span><span class="ot">I</span><span class="co">]</span>$</span>
-<span id="cb4-126"><a href="#cb4-126"></a></span>
-<span id="cb4-129"><a href="#cb4-129"></a><span class="in">```{r}</span></span>
-<span id="cb4-130"><a href="#cb4-130"></a><span class="co"># Set get_avg to TRUE to get the expected bits </span></span>
-<span id="cb4-131"><a href="#cb4-131"></a><span class="fu">calculate_entropy</span>(<span class="st">&quot;as&quot;</span>, two_letter_words, <span class="at">word_len =</span> <span class="dv">2</span>, <span class="at">get_avg =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb4-132"><a href="#cb4-132"></a>  kableExtra<span class="sc">::</span><span class="fu">kable</span>()</span>
-<span id="cb4-133"><a href="#cb4-133"></a><span class="in">```</span></span>
-<span id="cb4-134"><a href="#cb4-134"></a></span>
-<span id="cb4-135"><a href="#cb4-135"></a>d. Repeat steps b-c but for different two letter guesses. Which one is the best?</span>
-<span id="cb4-136"><a href="#cb4-136"></a></span>
-<span id="cb4-137"><a href="#cb4-137"></a><span class="fu">## Part 3: Real Example</span></span>
-<span id="cb4-138"><a href="#cb4-138"></a></span>
-<span id="cb4-139"><a href="#cb4-139"></a>a. So with the information presented above, devise an algorithm to determine what&#39;s the best starting word for wordle. (Check what Brandon got as his best first guess in avg_entropies.csv in the github)</span>
-<span id="cb4-140"><a href="#cb4-140"></a></span>
-<span id="cb4-141"><a href="#cb4-141"></a>b. How should we determine what our next subsequent guesses should be?</span>
-<span id="cb4-142"><a href="#cb4-142"></a></span>
-<span id="cb4-143"><a href="#cb4-143"></a>c. Let&#39;s play a game! (whichever group gets it in the lowest amount of guesses wins)</span>
-<span id="cb4-144"><a href="#cb4-144"></a></span>
-<span id="cb4-145"><a href="#cb4-145"></a><span class="fu">## Part 4: Discussion</span></span>
-<span id="cb4-146"><a href="#cb4-146"></a></span>
-<span id="cb4-147"><a href="#cb4-147"></a>a. What if there was a non uniform distribution in selecting the answer? How would we handle that?</span>
-<span id="cb4-148"><a href="#cb4-148"></a></span>
-<span id="cb4-149"><a href="#cb4-149"></a>b. Can you name another situation where information theory could be used? </span>
-<span id="cb4-150"><a href="#cb4-150"></a></span>
-<span id="cb4-151"><a href="#cb4-151"></a>c. Are there other strategies used for wordle? How do they compare to this approach?</span>
-<span id="cb4-152"><a href="#cb4-152"></a></span>
+<span id="cb4-37"><a href="#cb4-37"></a></span>
+<span id="cb4-38"><a href="#cb4-38"></a>g. Repeat f, but now let&#39;s suppose the actual answer was GLINT. </span>
+<span id="cb4-39"><a href="#cb4-39"></a></span>
+<span id="cb4-40"><a href="#cb4-40"></a>It&#39;s important to realize that the number of bits you would obtain is entirely dependent on what the truth is. So in this scenario, it&#39;s dependent on your &quot;result&quot; (the color of your squares). Therefore, if we&#39;re actually playing wordle, since we don&#39;t know what the truth is, we would assess the quality of a guess by the expected value of bits returned. </span>
+<span id="cb4-41"><a href="#cb4-41"></a></span>
+<span id="cb4-42"><a href="#cb4-42"></a>So using the law of total expectation, the formula for expected bits would be:</span>
+<span id="cb4-43"><a href="#cb4-43"></a></span>
+<span id="cb4-44"><a href="#cb4-44"></a>$$E<span class="co">[</span><span class="ot">I</span><span class="co">]</span> = \Sigma p_i\text{log}(\frac{1}{p_i}) $$</span>
+<span id="cb4-45"><a href="#cb4-45"></a></span>
+<span id="cb4-46"><a href="#cb4-46"></a>where $i$ represents each possible outcome (Since each of the 5 squares has 3 possible color outcomes: green, yellow, black; the total number of outcomes would be $3^5 = 243$)</span>
+<span id="cb4-47"><a href="#cb4-47"></a></span>
+<span id="cb4-48"><a href="#cb4-48"></a><span class="fu">## Part 2: Toy Example</span></span>
+<span id="cb4-49"><a href="#cb4-49"></a></span>
+<span id="cb4-50"><a href="#cb4-50"></a>Suppose in this scenario, we&#39;re playing wordle but with only 2 letter words. Read the file of 2 letter words here:</span>
+<span id="cb4-51"><a href="#cb4-51"></a></span>
+<span id="cb4-54"><a href="#cb4-54"></a><span class="in">```{r}</span></span>
+<span id="cb4-55"><a href="#cb4-55"></a><span class="co">#| warning: FALSE</span></span>
+<span id="cb4-56"><a href="#cb4-56"></a>two_letter_words <span class="ot">&lt;-</span> <span class="fu">readLines</span>(<span class="st">&quot;twoletterwords.txt&quot;</span>) <span class="co"># All acceptable 2 letter words for scrabble</span></span>
+<span id="cb4-57"><a href="#cb4-57"></a><span class="in">```</span></span>
+<span id="cb4-58"><a href="#cb4-58"></a></span>
+<span id="cb4-59"><a href="#cb4-59"></a>a. What are all the possible color combinations from a two letter word guess?</span>
+<span id="cb4-60"><a href="#cb4-60"></a></span>
+<span id="cb4-61"><a href="#cb4-61"></a>b. Determine the probability of obtaining each color combination if your guess was &quot;as&quot;.</span>
+<span id="cb4-62"><a href="#cb4-62"></a></span>
+<span id="cb4-65"><a href="#cb4-65"></a><span class="in">```{r}</span></span>
+<span id="cb4-66"><a href="#cb4-66"></a><span class="co">#| message: FALSE</span></span>
+<span id="cb4-67"><a href="#cb4-67"></a><span class="co">#| warning: FALSE </span></span>
+<span id="cb4-68"><a href="#cb4-68"></a></span>
+<span id="cb4-69"><a href="#cb4-69"></a><span class="co"># Full code can be found in wordlefuncs.R </span></span>
+<span id="cb4-70"><a href="#cb4-70"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb4-71"><a href="#cb4-71"></a></span>
+<span id="cb4-72"><a href="#cb4-72"></a>get_feedback <span class="ot">&lt;-</span> <span class="cf">function</span>(guess, target, <span class="at">word_len =</span> <span class="dv">5</span>) {</span>
+<span id="cb4-73"><a href="#cb4-73"></a>  guess <span class="ot">&lt;-</span> <span class="fu">toupper</span>(guess)</span>
+<span id="cb4-74"><a href="#cb4-74"></a>  target <span class="ot">&lt;-</span> <span class="fu">toupper</span>(target)</span>
+<span id="cb4-75"><a href="#cb4-75"></a>  </span>
+<span id="cb4-76"><a href="#cb4-76"></a>  feedback <span class="ot">&lt;-</span> <span class="fu">character</span>(word_len)</span>
+<span id="cb4-77"><a href="#cb4-77"></a>  </span>
+<span id="cb4-78"><a href="#cb4-78"></a>  target_matched <span class="ot">&lt;-</span> <span class="fu">logical</span>(word_len)</span>
+<span id="cb4-79"><a href="#cb4-79"></a>  </span>
+<span id="cb4-80"><a href="#cb4-80"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>word_len) {</span>
+<span id="cb4-81"><a href="#cb4-81"></a>    <span class="cf">if</span> (<span class="fu">substring</span>(guess, i, i)  <span class="sc">==</span> <span class="fu">substring</span>(target, i, i)) {</span>
+<span id="cb4-82"><a href="#cb4-82"></a>      feedback[i] <span class="ot">&lt;-</span> <span class="st">&quot;G&quot;</span></span>
+<span id="cb4-83"><a href="#cb4-83"></a>      target_matched[i] <span class="ot">&lt;-</span> <span class="cn">TRUE</span>  </span>
+<span id="cb4-84"><a href="#cb4-84"></a>    } <span class="cf">else</span> {</span>
+<span id="cb4-85"><a href="#cb4-85"></a>      feedback[i] <span class="ot">&lt;-</span> <span class="st">&quot;B&quot;</span></span>
+<span id="cb4-86"><a href="#cb4-86"></a>    }</span>
+<span id="cb4-87"><a href="#cb4-87"></a>  }</span>
+<span id="cb4-88"><a href="#cb4-88"></a>  </span>
+<span id="cb4-89"><a href="#cb4-89"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>word_len) {</span>
+<span id="cb4-90"><a href="#cb4-90"></a>    <span class="cf">if</span> (feedback[i] <span class="sc">==</span> <span class="st">&quot;B&quot;</span>) {  </span>
+<span id="cb4-91"><a href="#cb4-91"></a>      <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>word_len) {</span>
+<span id="cb4-92"><a href="#cb4-92"></a>        <span class="cf">if</span> (<span class="sc">!</span>target_matched[j] <span class="sc">&amp;</span> <span class="fu">substring</span>(guess, i, i) <span class="sc">==</span> <span class="fu">substring</span>(target, j, j)) {</span>
+<span id="cb4-93"><a href="#cb4-93"></a>          feedback[i] <span class="ot">&lt;-</span> <span class="st">&quot;Y&quot;</span></span>
+<span id="cb4-94"><a href="#cb4-94"></a>          target_matched[j] <span class="ot">&lt;-</span> <span class="cn">TRUE</span>  </span>
+<span id="cb4-95"><a href="#cb4-95"></a>          <span class="cf">break</span></span>
+<span id="cb4-96"><a href="#cb4-96"></a>        }</span>
+<span id="cb4-97"><a href="#cb4-97"></a>      }</span>
+<span id="cb4-98"><a href="#cb4-98"></a>    }</span>
+<span id="cb4-99"><a href="#cb4-99"></a>  }</span>
+<span id="cb4-100"><a href="#cb4-100"></a>  </span>
+<span id="cb4-101"><a href="#cb4-101"></a>  <span class="fu">paste</span>(feedback, <span class="at">collapse =</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb4-102"><a href="#cb4-102"></a>}</span>
+<span id="cb4-103"><a href="#cb4-103"></a></span>
+<span id="cb4-104"><a href="#cb4-104"></a>calculate_entropy <span class="ot">&lt;-</span> <span class="cf">function</span>(word, word_list, <span class="at">word_len =</span> <span class="dv">5</span>, <span class="at">get_avg =</span> <span class="cn">FALSE</span>) {</span>
+<span id="cb4-105"><a href="#cb4-105"></a>  ents <span class="ot">&lt;-</span> word_list <span class="sc">%&gt;%</span> </span>
+<span id="cb4-106"><a href="#cb4-106"></a>    <span class="fu">sapply</span>(<span class="cf">function</span>(w) <span class="fu">get_feedback</span>(word, w, word_len)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-107"><a href="#cb4-107"></a>    table <span class="sc">%&gt;%</span></span>
+<span id="cb4-108"><a href="#cb4-108"></a>    <span class="fu">data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-109"><a href="#cb4-109"></a>    <span class="fu">mutate</span>(<span class="at">word =</span> word, <span class="at">Freq =</span> Freq<span class="sc">/</span><span class="fu">sum</span>(Freq)) <span class="sc">|&gt;</span></span>
+<span id="cb4-110"><a href="#cb4-110"></a>    <span class="fu">rename</span>(<span class="at">feedback =</span> <span class="st">`</span><span class="at">.</span><span class="st">`</span>)</span>
+<span id="cb4-111"><a href="#cb4-111"></a>  </span>
+<span id="cb4-112"><a href="#cb4-112"></a>  <span class="cf">if</span> (get_avg) {</span>
+<span id="cb4-113"><a href="#cb4-113"></a>    ents <span class="ot">&lt;-</span> ents <span class="sc">%&gt;%</span></span>
+<span id="cb4-114"><a href="#cb4-114"></a>      <span class="fu">summarize</span>(<span class="at">avg =</span> <span class="fu">sum</span>(Freq <span class="sc">*</span> <span class="fu">log</span>(<span class="dv">1</span><span class="sc">/</span>Freq, <span class="dv">2</span>)))</span>
+<span id="cb4-115"><a href="#cb4-115"></a>  }</span>
+<span id="cb4-116"><a href="#cb4-116"></a>  </span>
+<span id="cb4-117"><a href="#cb4-117"></a>  ents</span>
+<span id="cb4-118"><a href="#cb4-118"></a>    </span>
+<span id="cb4-119"><a href="#cb4-119"></a>}</span>
+<span id="cb4-120"><a href="#cb4-120"></a></span>
+<span id="cb4-121"><a href="#cb4-121"></a><span class="co"># Use this to calculate probabilities</span></span>
+<span id="cb4-122"><a href="#cb4-122"></a><span class="fu">calculate_entropy</span>(<span class="st">&quot;as&quot;</span>, two_letter_words, <span class="at">word_len =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-123"><a href="#cb4-123"></a>  kableExtra<span class="sc">::</span><span class="fu">kable</span>()</span>
+<span id="cb4-124"><a href="#cb4-124"></a><span class="in">```</span></span>
+<span id="cb4-125"><a href="#cb4-125"></a></span>
+<span id="cb4-126"><a href="#cb4-126"></a>c. Calculate $E<span class="co">[</span><span class="ot">I</span><span class="co">]</span>$</span>
+<span id="cb4-127"><a href="#cb4-127"></a></span>
+<span id="cb4-130"><a href="#cb4-130"></a><span class="in">```{r}</span></span>
+<span id="cb4-131"><a href="#cb4-131"></a><span class="co"># Set get_avg to TRUE to get the expected bits </span></span>
+<span id="cb4-132"><a href="#cb4-132"></a><span class="fu">calculate_entropy</span>(<span class="st">&quot;as&quot;</span>, two_letter_words, <span class="at">word_len =</span> <span class="dv">2</span>, <span class="at">get_avg =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-133"><a href="#cb4-133"></a>  kableExtra<span class="sc">::</span><span class="fu">kable</span>()</span>
+<span id="cb4-134"><a href="#cb4-134"></a><span class="in">```</span></span>
+<span id="cb4-135"><a href="#cb4-135"></a></span>
+<span id="cb4-136"><a href="#cb4-136"></a>d. Repeat steps b-c but for different two letter guesses. Which one is the best?</span>
+<span id="cb4-137"><a href="#cb4-137"></a></span>
+<span id="cb4-138"><a href="#cb4-138"></a><span class="fu">## Part 3: Real Example</span></span>
+<span id="cb4-139"><a href="#cb4-139"></a></span>
+<span id="cb4-140"><a href="#cb4-140"></a>a. So with the information presented above, devise an algorithm to determine what&#39;s the best starting word for wordle. (Check what Brandon got as his best first guess in avg_entropies.csv in the github)</span>
+<span id="cb4-141"><a href="#cb4-141"></a></span>
+<span id="cb4-142"><a href="#cb4-142"></a>b. How should we determine what our next subsequent guesses should be?</span>
+<span id="cb4-143"><a href="#cb4-143"></a></span>
+<span id="cb4-144"><a href="#cb4-144"></a>c. Let&#39;s play a game! (whichever group gets it in the lowest amount of guesses wins)</span>
+<span id="cb4-145"><a href="#cb4-145"></a></span>
+<span id="cb4-146"><a href="#cb4-146"></a><span class="fu">## Part 4: Discussion</span></span>
+<span id="cb4-147"><a href="#cb4-147"></a></span>
+<span id="cb4-148"><a href="#cb4-148"></a>a. What if there was a non uniform distribution in selecting the answer? How would we handle that?</span>
+<span id="cb4-149"><a href="#cb4-149"></a></span>
+<span id="cb4-150"><a href="#cb4-150"></a>b. Can you name another situation where information theory could be used? </span>
+<span id="cb4-151"><a href="#cb4-151"></a></span>
+<span id="cb4-152"><a href="#cb4-152"></a>c. Are there other strategies used for wordle? How do they compare to this approach?</span>
 <span id="cb4-153"><a href="#cb4-153"></a></span>
+<span id="cb4-154"><a href="#cb4-154"></a></span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

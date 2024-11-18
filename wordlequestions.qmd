@@ -34,6 +34,7 @@ $$ \text{bits} = \text{log}_2(\frac{1}{p}) $$
 In this context, bits are used as a metric to assess the quality of a guess. The more narrow the probability space gets after a guess, the more bits is attributed to that guess. It's important to note that it is directly associated with probability, the lower the probability, the higher the returning bits. Therefore, its commonly explained that bits are directly correlated with uncertainty. 
 
 f. With the actual answer being PLANE, calculate the number of bits you would obtain from each guess from questions a, c, d, and e. 
+
 g. Repeat f, but now let's suppose the actual answer was GLINT. 
 
 It's important to realize that the number of bits you would obtain is entirely dependent on what the truth is. So in this scenario, it's dependent on your "result" (the color of your squares). Therefore, if we're actually playing wordle, since we don't know what the truth is, we would assess the quality of a guess by the expected value of bits returned. 
