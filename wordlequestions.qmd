@@ -109,12 +109,14 @@ calculate_entropy <- function(word, word_list, word_len = 5, get_avg = FALSE) {
     
 }
 
+# Use this to calculate probabilities
 calculate_entropy("as", two_letter_words, word_len = 2)
 ```
 
 c. Calculate $E[I]$
 
 ```{r}
+# Set get_avg to TRUE to get the expected bits 
 calculate_entropy("as", two_letter_words, word_len = 2, get_avg = TRUE)
 ```
 
