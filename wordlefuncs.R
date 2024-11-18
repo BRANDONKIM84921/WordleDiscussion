@@ -54,12 +54,10 @@ calculate_entropy <- function(word, word_list, get_avg = FALSE) {
     
 }
 
-# Determining best start
+# Determining best start (takes a long time)
 get_entropies <- data.frame()
 
 for (word in word_list) {
-  
-  print(word)
   
   ents <- calculate_entropy(word, word_list)
   
