@@ -108,7 +108,7 @@ calculate_entropy <- function(word, word_list, word_len = 5, get_avg = FALSE) {
   if (get_avg) {
     ents <- ents %>%
       group_by(word) %>%
-      summarize(avg = sum(Freq * log(1/Freq, 2)))
+      summarize(average_bits = sum(Freq * log(1/Freq, 2)))
   }
   
   ents
