@@ -53,6 +53,10 @@ a. What are all the possible color combinations from a two letter word guess?
 b. Determine the probability of obtaining each color combination if your guess was "as".
 
 ```{r}
+#| message: FALSE
+#| warning: FALSE 
+
+# Full code can be found in wordlefuncs.R 
 library(tidyverse)
 
 get_feedback <- function(guess, target, word_len = 5) {

@@ -1,7 +1,9 @@
 library(tidyverse)
 
+# All 5 letter words that can be answers for NYT wordle
 word_list <- readLines("wordlewords.txt")
 
+# Determine result of guess given a target
 get_feedback <- function(guess, target, wordlen = 5) {
   guess <- toupper(guess)
   target <- toupper(target)
@@ -34,6 +36,7 @@ get_feedback <- function(guess, target, wordlen = 5) {
   paste(feedback, collapse = "")
 }
 
+# Entropy calculation
 calculate_entropy <- function(word, word_list, get_avg = FALSE) {
   ents <- word_list %>% 
     sapply(function(w) get_feedback(word, w)) %>%
@@ -52,6 +55,7 @@ calculate_entropy <- function(word, word_list, get_avg = FALSE) {
     
 }
 
+# Determining best start
 get_entropies <- data.frame()
 
 for (word in word_list) {
@@ -64,6 +68,7 @@ for (word in word_list) {
   
 }
 
+# Best start:
 avg_entropies <- get_entropies %>%
   group_by(word) %>%
   summarize(avg = sum(Freq * log(1/Freq, 2))) %>%
