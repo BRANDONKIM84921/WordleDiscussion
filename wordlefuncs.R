@@ -4,15 +4,15 @@ library(tidyverse)
 word_list <- readLines("wordlewords.txt")
 
 # Determine result of guess given a target
-get_feedback <- function(guess, target, wordlen = 5) {
+get_feedback <- function(guess, target, word_len = 5) {
   guess <- toupper(guess)
   target <- toupper(target)
   
-  feedback <- character(wordlen)
+  feedback <- character(word_len)
   
-  target_matched <- logical(wordlen)
+  target_matched <- logical(word_len)
   
-  for (i in 1:wordlen) {
+  for (i in 1:word_len) {
     if (substring(guess, i, i)  == substring(target, i, i)) {
       feedback[i] <- "G"
       target_matched[i] <- TRUE  
@@ -21,9 +21,9 @@ get_feedback <- function(guess, target, wordlen = 5) {
     }
   }
   
-  for (i in 1:wordlen) {
+  for (i in 1:word_len) {
     if (feedback[i] == "B") {  
-      for (j in 1:wordlen) {
+      for (j in 1:word_len) {
         if (!target_matched[j] & substring(guess, i, i) == substring(target, j, j)) {
           feedback[i] <- "Y"
           target_matched[j] <- TRUE  
@@ -37,9 +37,9 @@ get_feedback <- function(guess, target, wordlen = 5) {
 }
 
 # Entropy calculation
-calculate_entropy <- function(word, word_list, get_avg = FALSE) {
+calculate_entropy <- function(word, word_list, word_len = 5, get_avg = FALSE) {
   ents <- word_list %>% 
-    sapply(function(w) get_feedback(word, w)) %>%
+    sapply(function(w) get_feedback(word, w, word_len)) %>%
     table %>%
     data.frame() %>%
     mutate(word = word, Freq = Freq/sum(Freq)) |>
@@ -47,6 +47,7 @@ calculate_entropy <- function(word, word_list, get_avg = FALSE) {
   
   if (get_avg) {
     ents <- ents %>%
+      group_by(word) %>%
       summarize(avg = sum(Freq * log(1/Freq, 2)))
   }
   
@@ -71,5 +72,12 @@ avg_entropies <- get_entropies %>%
   summarize(avg = sum(Freq * log(1/Freq, 2))) %>%
   arrange(desc(avg))
 
+# Trying Other common words
+avg_entropies <- avg_entropies %>%
+  rbind(calculate_entropy("soare", word_list, get_avg = TRUE),
+        calculate_entropy("salet", word_list, get_avg = TRUE)) %>%
+  arrange(desc(avg))
+
+# Writing
 write_csv(avg_entropies, here::here("avg_entropies.csv"))
 
