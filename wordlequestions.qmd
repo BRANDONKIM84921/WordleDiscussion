@@ -1,0 +1,25 @@
+---
+title: "Using Information Theory to Solve Wordle"
+format: html
+editor: visual
+---
+
+## Part 1. Introduction to Bits 
+
+Suppose a person was playing the daily wordle. However, today's a weird day because when NYT was selecting a word for the answer, they only randomly selected from these 10 possible words:
+
+PLANE PLANT CRANE SHAPE SLANT FLARE PARTY GLINT GRAPH APPLE
+
+For this scenario, let's assume this person doesn't know about this restriction in the answer choice. They decide to start the game by guessing STAMP.
+
+1.  Let's say the actual answer was PLANE. What "result" would the guess STAMP give?
+
+2.  With that "result," how many of those 10 possible words are eliminated from being the correct choice?
+
+3.  Repeat 1-2, but let's say this person guessed MARCH.
+
+4.  Repeat 1-2, but let's say this person guessed PLAIN.
+
+5.  Repeat 1-2 but let's say this person guessed MYTHS
+
+Working with probabilities is a bit funky.
