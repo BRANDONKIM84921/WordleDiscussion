@@ -43,7 +43,7 @@ So using the law of total expectation, the formula for expected bits would be:
 
 $$E[I] = \Sigma p_i\text{log}(\frac{1}{p_i}) $$
 
-where $i$ represents each possible outcome (Since each of the 5 squares has 3 possible color outcomes: green, yellow, black; the total number of outcomes would be $3^5 = 243$)
+where $i$ represents each possible outcome (Since each of the 5 squares has 3 possible color outcomes: green, yellow, black; the total number of outcomes would be $3^5 -5 = 238$)
 
 ## Part 2: Toy Example
 
